@@ -1,0 +1,453 @@
+/*
+ * Black Owned Sheffield map styling: pins, clusters, popups and controls.
+ * Hex fallbacks keep it working even if a theme variable is not emitted.
+ */
+
+.bos-map {
+  --bos-espresso: var(--color-espresso, #2a1910);
+  --bos-cream: var(--color-cream, #fbf5ec);
+  --bos-pink: var(--color-pink, #f2a0bd);
+  --bos-rose: var(--color-rose, #e0628f);
+  --bos-sunflower: var(--color-sunflower, #f6bd3c);
+  --bos-teal: var(--color-teal, #167a6f);
+  --bos-cocoa: var(--color-cocoa, #55321f);
+}
+
+.bos-map .leaflet-container {
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  background: var(--color-cream-deep, #f5ebdd);
+}
+
+/* Fallback OpenStreetMap tiles, softened to sit with the cream palette */
+.bos-map .bos-tiles--warm {
+  filter: saturate(0.7) sepia(0.12) brightness(1.02);
+}
+
+/* Keep Leaflet controls clear of overlays on the full-screen map */
+.bos-map .leaflet-top {
+  top: var(--map-top-inset, 0px);
+}
+.bos-map .leaflet-bottom {
+  bottom: var(--map-bottom-inset, 0px);
+}
+
+/* ───────── Pins ───────── */
+.bos-pin-icon {
+  background: none;
+  border: 0;
+}
+.bos-pin {
+  position: relative;
+  width: 38px;
+  height: 46px;
+  filter: drop-shadow(2px 2px 0 var(--bos-espresso));
+  transform-origin: 50% 90%;
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1.4);
+}
+.bos-pin__drop,
+.bos-pin__icon {
+  position: absolute;
+  left: 3px;
+  top: 2px;
+  width: 32px;
+  height: 32px;
+}
+.bos-pin__drop {
+  background: var(--pin);
+  border: 2px solid var(--bos-espresso);
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+}
+.bos-pin__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pin-ink);
+}
+.bos-pin__star {
+  position: absolute;
+  top: -2px;
+  right: -1px;
+  width: 13px;
+  height: 13px;
+  border-radius: 9999px;
+  background: var(--bos-sunflower);
+  border: 2px solid var(--bos-espresso);
+}
+.bos-pin--lg {
+  width: 52px;
+  height: 62px;
+  filter: drop-shadow(3px 3px 0 var(--bos-espresso));
+}
+.bos-pin--lg .bos-pin__drop,
+.bos-pin--lg .bos-pin__icon {
+  left: 4px;
+  top: 3px;
+  width: 44px;
+  height: 44px;
+}
+.bos-pin--lg .bos-pin__drop {
+  border-width: 2.5px;
+}
+
+.bos-pin-icon:hover .bos-pin,
+.bos-pin-icon:focus-visible .bos-pin,
+.bos-pin-icon.is-highlighted .bos-pin,
+.bos-pin-icon.is-selected .bos-pin {
+  transform: translateY(-4px) scale(1.18);
+}
+.bos-pin-icon.is-highlighted .bos-pin__drop,
+.bos-pin-icon.is-selected .bos-pin__drop {
+  box-shadow: 0 0 0 4px var(--bos-pink);
+}
+.bos-pin-icon:focus-visible {
+  outline: none;
+}
+.bos-pin-icon:focus-visible .bos-pin__drop {
+  box-shadow: 0 0 0 4px var(--bos-rose);
+}
+
+/* Visually hidden text for screen readers (inside Leaflet markup) */
+.bos-map .bos-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ───────── Clusters ───────── */
+.bos-cluster-icon {
+  background: none;
+  border: 0;
+}
+.bos-cluster {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: var(--bos-espresso);
+  color: var(--bos-cream);
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1;
+  box-shadow:
+    0 0 0 4px var(--bos-pink),
+    0 0 0 6px var(--bos-espresso);
+  transition: transform 180ms ease;
+}
+.bos-cluster-icon:hover .bos-cluster,
+.bos-cluster-icon:focus-visible .bos-cluster,
+.bos-cluster-icon.is-highlighted .bos-cluster {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 0 5px var(--bos-sunflower),
+    0 0 0 7px var(--bos-espresso);
+}
+.bos-cluster-icon:focus-visible {
+  outline: none;
+}
+
+/* ───────── Where you are / searched place ───────── */
+.bos-origin-icon {
+  background: none;
+  border: 0;
+}
+.bos-origin {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+.bos-origin__dot {
+  position: absolute;
+  inset: 6px;
+  border-radius: 9999px;
+  border: 3px solid var(--bos-cream);
+  box-shadow: 0 0 0 2px var(--bos-espresso);
+}
+.bos-origin--me .bos-origin__dot {
+  background: var(--bos-teal);
+}
+.bos-origin--place .bos-origin__dot {
+  background: var(--bos-rose);
+}
+.bos-origin__pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  opacity: 0.35;
+  animation: bos-pulse 2.2s ease-out infinite;
+}
+.bos-origin--me .bos-origin__pulse {
+  background: var(--bos-teal);
+}
+.bos-origin--place .bos-origin__pulse {
+  background: var(--bos-rose);
+}
+@keyframes bos-pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* ───────── Popups ───────── */
+.bos-popup-wrap .leaflet-popup-content-wrapper {
+  background: var(--bos-cream);
+  color: var(--bos-espresso);
+  border: 2px solid var(--bos-espresso);
+  border-radius: 1.25rem;
+  box-shadow: 4px 4px 0 0 var(--bos-espresso) !important;
+}
+.bos-popup-wrap .leaflet-popup-tip {
+  background: var(--bos-cream);
+  border: 2px solid var(--bos-espresso);
+  box-shadow: none;
+}
+.bos-popup-wrap .leaflet-popup-content {
+  margin: 0;
+  line-height: 1.35;
+  font-size: 14px;
+}
+.bos-popup-wrap a.leaflet-popup-close-button {
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 18px/1 var(--font-heading), system-ui, sans-serif;
+  color: var(--bos-espresso);
+  background: rgb(255 255 255 / 0.85);
+  border: 2px solid rgb(42 25 16 / 0.15);
+}
+/* 28px to look at, 44px to tap */
+.bos-popup-wrap a.leaflet-popup-close-button::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+.bos-popup-wrap a.leaflet-popup-close-button:hover {
+  border-color: var(--bos-espresso);
+  color: var(--bos-espresso);
+}
+
+.bos-popup {
+  width: 272px;
+  max-width: calc(100vw - 72px);
+  padding: 14px;
+}
+.bos-popup p {
+  margin: 0;
+}
+.bos-popup__top {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding-right: 28px;
+}
+.bos-popup__logo {
+  position: relative;
+  flex: none;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 2px solid var(--bos-espresso);
+  background: #fff;
+}
+.bos-popup__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 3px;
+}
+.bos-popup__initials {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 19px;
+}
+.bos-popup__meta {
+  min-width: 0;
+}
+.bos-popup__cat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bos-cocoa);
+}
+.bos-popup__dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 9999px;
+  box-shadow: 0 0 0 1.5px var(--bos-espresso);
+}
+.bos-popup__name {
+  margin-top: 3px !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--bos-espresso);
+}
+.bos-popup__name svg {
+  flex: none;
+}
+.bos-popup__area {
+  margin-top: 4px !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--bos-cocoa);
+}
+.bos-popup__area svg {
+  flex: none;
+  color: var(--bos-rose);
+}
+.bos-popup__offer {
+  margin-top: 10px !important;
+  border-radius: 10px;
+  background: var(--color-blush, #fadbe6);
+  padding: 6px 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-rose-ink, #b02a62);
+}
+.bos-popup__sample {
+  margin-top: 8px !important;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgb(85 50 31 / 0.75);
+}
+.bos-popup__actions {
+  margin-top: 12px;
+  display: grid;
+  gap: 6px;
+}
+.bos-popup__row {
+  display: flex;
+  gap: 6px;
+}
+.bos-popup__row > * {
+  flex: 1 1 0;
+}
+.bos-popup__btn {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 2px solid var(--bos-espresso);
+  background: #fff;
+  padding: 0 10px;
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--bos-espresso) !important;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    background 150ms ease;
+}
+.bos-popup__btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0 0 var(--bos-espresso);
+}
+.bos-popup__btn--primary {
+  background: var(--bos-espresso);
+  color: var(--bos-cream) !important;
+}
+.bos-popup__btn--primary:hover {
+  box-shadow: 3px 3px 0 0 var(--bos-pink);
+}
+
+/* ───────── Controls ───────── */
+.bos-map .leaflet-control-zoom {
+  border: 2px solid var(--bos-espresso) !important;
+  border-radius: 14px !important;
+  overflow: hidden;
+  box-shadow: 2px 2px 0 0 var(--bos-espresso) !important;
+}
+.bos-map .leaflet-control-zoom a {
+  width: 44px;
+  height: 44px;
+  line-height: 42px;
+  font-size: 20px;
+  color: var(--bos-espresso) !important;
+  background: var(--bos-cream);
+  font-weight: 700;
+}
+.bos-map .leaflet-control-zoom a:hover {
+  background: var(--color-blush, #fadbe6);
+}
+.bos-map .leaflet-control-zoom-in {
+  border-bottom: 2px solid var(--bos-espresso) !important;
+}
+.bos-map .leaflet-control-attribution {
+  background: rgb(251 245 236 / 0.85);
+  color: var(--bos-cocoa);
+  border-top-left-radius: 8px;
+}
+.bos-map .leaflet-control-attribution a {
+  color: var(--color-rose-ink, #b02a62);
+}
+.bos-map--hide-zoom-mobile .leaflet-control-zoom {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .bos-map--hide-zoom-mobile .leaflet-control-zoom {
+    display: block;
+  }
+}
+
+/* Markercluster animations (keep them gentle) */
+.bos-map .leaflet-cluster-anim .leaflet-marker-icon,
+.bos-map .leaflet-cluster-anim .leaflet-marker-shadow {
+  transition:
+    transform 0.3s ease-out,
+    opacity 0.3s ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bos-pin,
+  .bos-cluster {
+    transition: none;
+  }
+  .bos-origin__pulse {
+    animation: none;
+    display: none;
+  }
+}
